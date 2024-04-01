@@ -1,6 +1,30 @@
 ---
-
+import GithubIcon from "../Icons/github.astro";
+import DiscordIcon from "../Icons/discord.astro";
+import LinkedinIcon from "../Icons/linkedin.astro";
 ---
+
+<!-- Estilos globales -->
+<style is:global>
+  #astro {
+    font-family: Arial, sans-serif;
+    background-color: #131212;
+    color: white;
+  }
+</style>
+
+<!-- Estilos específicos del componente -->
+<style>
+  body {
+    background-image: url("/cuadros.png");
+  }
+  .hello-world {
+    color: #333;
+    font-size: 24px;
+    text-align: center;
+    padding: 20px;
+  }
+</style>
 
 <html lang="en">
   <head>
@@ -8,9 +32,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>Code Crafther Studios</title>
   </head>
-  <body>
+  <body class="bg-primary text-white">
     <h1>hello</h1>
+    <GithubIcon />
+    <DiscordIcon />
+    <LinkedinIcon />
   </body>
 </html>
