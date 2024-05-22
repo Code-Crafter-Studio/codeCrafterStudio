@@ -1,10 +1,7 @@
 ---
-import GithubIcon from "../Icons/github.astro";
-import DiscordIcon from "../Icons/discord.astro";
-import LinkedinIcon from "../Icons/linkedin.astro";
+import Movile from "@components/movile.astro";
 ---
 
-<!-- Estilos globales -->
 <style is:global>
   #astro {
     font-family: Arial, sans-serif;
@@ -13,11 +10,7 @@ import LinkedinIcon from "../Icons/linkedin.astro";
   }
 </style>
 
-<!-- Estilos específicos del componente -->
 <style>
-  body {
-    background-image: url("/cuadros.png");
-  }
   .hello-world {
     color: #333;
     font-size: 24px;
@@ -34,10 +27,18 @@ import LinkedinIcon from "../Icons/linkedin.astro";
     <meta name="generator" content={Astro.generator} />
     <title>Code Crafther Studios</title>
   </head>
-  <body class="bg-primary text-white">
-    <h1>hello</h1>
-    <GithubIcon />
-    <DiscordIcon />
-    <LinkedinIcon />
+  <body
+    class="flex justify-center bg-primary text-secondary h-screen w-screen overflow-y-auto"
+  >
+    <main class="flex flex-col h-full w-[70vw]">
+      <h1
+        class="text-2xl text-center font-bold bg-gradient-to-r from-[#80EAB8] to-secondary text-transparent bg-clip-text lg:text-5xl md:text-4xl sm:text-3xl mb-10 w-full"
+      >
+        Innovación en Software y Tecnología
+      </h1>
+      <section class="flex justify-center items-center">
+        <Movile />
+      </section>
+    </main>
   </body>
 </html>
