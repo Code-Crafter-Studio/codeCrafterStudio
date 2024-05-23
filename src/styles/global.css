@@ -1,0 +1,7 @@
+/* styles.css */
+@font-face {
+    font-family: 'TWK Everett Bold';
+    src: url('/fonts/TWKEverett-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}

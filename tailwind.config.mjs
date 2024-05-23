@@ -25,6 +25,9 @@ export default {
     },
     extend: {
       colors: { ...darkTheme },
+      fontFamily: {
+        'twk-everett': ['TWK Everett Bold', 'sans-serif'],
+      },
     },
   },
   plugins: [],

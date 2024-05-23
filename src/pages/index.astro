@@ -1,24 +1,10 @@
 ---
 import Movile from "@components/movile.astro";
 import NavBar from "@components/NavBar.astro";
+import Hero from "@components/Hero.astro";
+import "../styles/global.css";
 ---
 
-<style is:global>
-  #astro {
-    font-family: Arial, sans-serif;
-    background-color: #131212;
-    color: white;
-  }
-</style>
-
-<style>
-  .hello-world {
-    color: #333;
-    font-size: 24px;
-    text-align: center;
-    padding: 20px;
-  }
-</style>
 
 <html lang="en">
   <head>
@@ -28,23 +14,10 @@ import NavBar from "@components/NavBar.astro";
     <meta name="generator" content={Astro.generator} />
     <title>Code Crafther Studios</title>
   </head>
-  <body
-    class="flex justify-center bg-primary text-secondary h-screen w-screen overflow-y-auto"
-  >
-    <main class="flex flex-col h-full w-[70vw] gap-10">
+  <body class="bg-primary">
+    <main class="flex flex-col bg-primary  w-[70vw] gap-10  m-auto">
       <NavBar />
-      <h1
-        class="text-2xl text-center font-bold bg-gradient-to-r from-accent via-green-300 to-secondary text-transparent bg-clip-text lg:text-5xl md:text-4xl sm:text-3xl w-full"
-      >
-        Innovación en Software y Tecnología
-      </h1>
-
-      <h2 class="text-md md:text-lg text-center text-neutral">
-        En CodeCrafterStudios, desarrollamos cualquier producto de software que
-        necesites: IA, blockchain, web, móvil y automatización. Nuestra
-        innovación y enfoque personalizado garantizan resultados excepcionales.
-        Impulse su éxito con nosotros en la era digital.
-      </h2>
+      <Hero/>
       <section class="flex justify-center items-center">
         <Movile />
       </section>
