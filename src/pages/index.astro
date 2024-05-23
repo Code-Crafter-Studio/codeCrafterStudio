@@ -1,5 +1,6 @@
 ---
 import Movile from "@components/movile.astro";
+import NavBar from "@components/NavBar.astro";
 ---
 
 <style is:global>
@@ -30,12 +31,20 @@ import Movile from "@components/movile.astro";
   <body
     class="flex justify-center bg-primary text-secondary h-screen w-screen overflow-y-auto"
   >
-    <main class="flex flex-col h-full w-[70vw]">
+    <main class="flex flex-col h-full w-[70vw] gap-10">
+      <NavBar />
       <h1
-        class="text-2xl text-center font-bold bg-gradient-to-r from-[#80EAB8] to-secondary text-transparent bg-clip-text lg:text-5xl md:text-4xl sm:text-3xl mb-10 w-full"
+        class="text-2xl text-center font-bold bg-gradient-to-r from-accent via-green-300 to-secondary text-transparent bg-clip-text lg:text-5xl md:text-4xl sm:text-3xl w-full"
       >
         Innovación en Software y Tecnología
       </h1>
+
+      <h2 class="text-md md:text-lg text-center text-neutral">
+        En CodeCrafterStudios, desarrollamos cualquier producto de software que
+        necesites: IA, blockchain, web, móvil y automatización. Nuestra
+        innovación y enfoque personalizado garantizan resultados excepcionales.
+        Impulse su éxito con nosotros en la era digital.
+      </h2>
       <section class="flex justify-center items-center">
         <Movile />
       </section>
