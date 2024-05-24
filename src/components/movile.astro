@@ -1,20 +1,32 @@
-<div class="relative z-10 w-[284px] h-[600px] overflow-visible">
-  <div class="absolute inset-0 scale-100 hover:scale-125 opacity-100">
-    <video
-      src="/public/media/videomovile.mp4"
-      loop
-      playsinline
-      autoplay
-      class="cursor-auto w-full h-full rounded-[35px] object-cover bg-transparent"
-    ></video>
-  </div>
-  <div class="absolute inset-[-26px] z-20">
-    <img
-      decoding="async"
-      sizes="304px"
-      src="/public/media/phone.webp"
-      alt=""
-      class="block w-full h-full rounded-inherit object-cover"
-    />
+---
+// Asumiendo que tienes las propiedades pasadas correctamente
+interface Props {
+  urlVideo: string;
+}
+const { urlVideo } = Astro.props;
+---
+
+<div class="flex justify-center items-center w-full h-full hover:scale-125">
+  <div
+    class="relative z-10 w-[284px] max-w-[300px] h-full max-h-[600px] overflow-visible"
+  >
+    <div class="absolute opacity-100">
+      <video
+        src={urlVideo}
+        loop
+        playsinline
+        autoplay
+        class="cursor-auto w-full h-full rounded-[35px] object-cover bg-transparent p-5"
+      ></video>
+    </div>
+    <div class="absolute z-20">
+      <img
+        decoding="async"
+        sizes="304px"
+        src="/public/media/phone.webp"
+        alt="Phone Frame"
+        class="block w-full h-full rounded-inherit object-cover"
+      />
+    </div>
   </div>
 </div>
