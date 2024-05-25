@@ -1,20 +1,112 @@
-<div class="relative z-10 w-full h-[630px] overflow-visible">
-    <div class="absolute inset-0 scale-100 hover:scale-125 opacity-100">
-      <video
-        src="/public/media/videoMac.mp4"
-        loop
-        playsinline
-        autoplay
-        class="cursor-auto w-[59vw] md:w-[55vw] lg:w-[55vw] lg:w-[48vw] md:h-full h-[20vh] rounded-[10px]  md:rounded-[35px] object-cover bg-transparent m-auto"
-      ></video>
-    </div>
-    <div class="absolute inset-[-16px]  md:inset-[-16px] z-20">
-        <img
-          decoding="async"
-          sizes="304px"
-          src="/public/media/mac.svg"
-          alt=""
-          class="block w-[75vw] md:h-full h-[25vh] rounded-inherit md:m-auto m-2"
-        />
-    </div>
+
+<style>
+    .mac-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px; /* Ajusta según el tamaño deseado */
+      margin: auto;
+    }
+
+    .mac-image {
+      width: 100%;
+      display: block;
+    }
+
+    .video-container {
+      position: absolute;
+      top: 16%; /* Ajusta estos valores según la posición de la pantalla en la imagen */
+      left: 12%;
+      width: 76%; /* Ajusta el ancho según la pantalla de la MacBook */
+      height: 60%; /* Ajusta la altura según la pantalla de la MacBook */
+      overflow: hidden;
+    }
+
+    @media (max-width: 734px) {
+      .video-container video {
+        top: 16%;
+        left: 12%;
+        width: 59vw;
+      }
+    }
+    @media (min-width: 735px) and (max-width: 1068px) {
+      .video-container video {
+        width: 55vw;
+      }
+    }
+    @media (min-width: 1069px) and (max-width: 1440px) {
+      .video-container {
+        top: 16%;
+        left: 12%;
+        width: 76%;
+        height: 60%;
+        width: 55vw;
+      }
+    }
+    @media (min-width: 1441px) {
+      .video-container {
+        top: 10%;
+        left: 10%;
+        height: 100%;
+        width: 56vw;
+      }
+    }
+    @media (min-width: 1920px) {
+      .video-container {
+        top: 10%;
+        left: 8.5%;
+        width: 50vw;
+        height: 80vh;
+      }
+    }
+</style>
+<div
+  class="mac-container relative z-10 w-full overflow-visible flex justify-center"
+>
+  <picture
+    id="overview-shared-mbp-16-hw-2"
+    class="mac-image overview-shared-mbp-16-hw hw-overlay loaded m-auto"
+    data-lazy
+    data-picture-loaded
+  >
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_small.jpg"
+      media="(max-width:734px)"
+    />
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_medium.jpg"
+      media="(max-width:1068px)"
+    />
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_large.jpg"
+      media="(min-width:0px)"
+    />
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_small.jpg, /v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_small_2x.jpg 2x"
+      media="(max-width:734px)"
+    />
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_medium.jpg, /v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_medium_2x.jpg 2x"
+      media="(max-width:1068px)"
+    />
+    <source
+      srcset="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_large.jpg, /v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_large_2x.jpg 2x"
+      media="(min-width:0px)"
+    />
+    <img
+      src="https://www.apple.com/v/macbook-pro/ak/images/overview/shared/mbp_16_hw__cqlhn5ys0o9y_large.jpg"
+      onload="__lp(event)"
+     />
+  </picture>
+  <div class="video-container absolute inset-0 scale-100 opacity-100">
+    <video
+      src="/public/media/videoMac.mp4"
+      loop
+      playsinline
+      autoplay
+      class="
+        
+        bg-transparent 
+        m-auto"
+    ></video>
+  </div>
 </div>
