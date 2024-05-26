@@ -6,7 +6,9 @@ interface Props {
 const { urlVideo } = Astro.props;
 ---
 
-<div class="flex justify-center items-center w-full h-full hover:scale-10">
+<div
+  class="flex justify-center items-center w-[300px] h-[600px] hover:scale-10"
+>
   <div
     class="relative z-10 w-[284px] max-w-[300px] h-full max-h-[600px] overflow-visible"
   >
@@ -23,7 +25,7 @@ const { urlVideo } = Astro.props;
       <img
         decoding="async"
         sizes="304px"
-        src="/public/media/phone.webp"
+        src="/media/phone.webp"
         alt="Phone Frame"
         class="block w-full h-full rounded-inherit object-cover"
       />
