@@ -1,0 +1,67 @@
+
+<style>
+    .title {
+      font-family: "TWK Everett Bold", sans-serif;
+      letter-spacing: -0.02em;
+    }
+    .swiper-slide{
+         width: 350px !important;
+    }
+    .img-back{
+        background-image: url('media/backCard1@100x.png');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+  
+  </style>
+  <script>
+      import Swiper from 'swiper';
+      import 'swiper/css';
+      import { Navigation } from "swiper/modules";
+  
+  
+      // Configurar Swiper
+      const swiper = new Swiper(".swiper", {
+        modules: [Navigation], // definir los módulos a usar
+        loop: false,            // definir si los slides estarán en bucle
+        slidesPerView: 4,      // agregar número de slides para la pantalla
+        spaceBetween: 20,      // separación entre slides en px
+        navigation: {          // definir botones next y prev para el módulo Navigation
+          prevEl: ".swiper-button-prev",
+          nextEl: ".swiper-button-next",
+        }
+      });
+  </script>
+  
+  <article
+    class="flex justify-center flex-col items-center w-full bg-secondary text-primary pt-[100px]"
+  >
+  <h1 class="title text-5xl ">Nuestros Servicios.</h1>
+  <div class="swiper w-[80vw] m-5">
+      <!-- Wrapper adicional requerido -->
+      <div class="swiper-wrapper h-[3vh]">
+        <!-- Los slides -->
+        <div class="swiper-slide relative">
+          <img src="media/backCard1@100x.png" alt="" sizes="400" class="rounded-[30px]">
+          <div class="title absolute inset-0 flex flex-col justify-center items-center text-4xl"> <!-- Texto centrado en la imagen -->
+            <p class="text-[40px]">Desarrollo web</p>
+            <p class="text-white">{'</>'}</p>   
+            <p class="text-2xl text-center">Soporte  y desarrollode aplicativos web</p>
+          </div>
+        </div>
+        <div class="swiper-slide"><img src="logos/cardEjemplo.svg" alt="" sizes="400"/></div>
+        <div class="swiper-slide"><img src="logos/cardEjemplo.svg" alt="" sizes="400"/></div>
+        <div class="swiper-slide"><img src="logos/cardEjemplo.svg" alt="" sizes="400"/></div>
+        <div class="swiper-slide"><img src="logos/cardEjemplo.svg" alt="" sizes="400"/></div>
+        <div class="swiper-slide"><img src="logos/cardEjemplo.svg" alt="" sizes="400"/></div>
+      </div>
+      <div class="flex  w-100 justify-end text-xl">
+        <div class="swiper-button-prev "> {'<'} </div>
+        <div class="swiper-button-next"> {'>'} </div>
+      </div>
+  </div>
+  
+  </article>
+  
