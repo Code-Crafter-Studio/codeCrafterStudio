@@ -4,6 +4,21 @@ import Hero from "@components/Hero.astro";
 import "../styles/global.css";
 import Mac from "@components/Mac.astro";
 import Services from "@components/Services.astro";
+import Team from "@components/Team.astro";
+import Titleteam from "@components/Titleteam.astro"
+
+const team = [
+  {
+    photo: 'https://i.pinimg.com/236x/4b/b2/bb/4bb2bb45bd21bb55053cebbd672b85f2.jpg',
+    name: 'Juan',
+    position: 'Developer',
+  },
+  {
+    photo: 'https://i.pinimg.com/236x/4b/b2/bb/4bb2bb45bd21bb55053cebbd672b85f2.jpg',
+    name: 'John',
+    position: 'Developer',
+  },
+];
 ---
 
 <html lang="en">
@@ -22,6 +37,13 @@ import Services from "@components/Services.astro";
         <Mac />
       </section>
       <Services />
+     <Titleteam/>
+      <section class="bg-primary flex flex-row gap-10 pb-10 pt-10 justify-center">
+        
+        {team.map(index => (
+          <Team photo={index.photo} name={index.name} position={index.position} />
+        ))}
+      </section>
     </main>
   </body>
 </html>
