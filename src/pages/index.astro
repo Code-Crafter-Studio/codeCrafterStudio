@@ -2,7 +2,6 @@
 import NavBar from "@components/NavBar.astro";
 import Hero from "@components/Hero.astro";
 import "../styles/global.css";
-import Contac from "@components/Contac.astro";
 import Services from "@components/Services.astro";
 import Team from "@components/Team.astro";
 
@@ -17,11 +16,11 @@ const team = [
     name: "Juan Yonda",
     role: "Developer",
   },
-  {
-    photo: "/media/andreacoque.jpg",
-    name: "Karen coque",
-    role: "Contadora",
-  },
+  // {
+  //   photo: "/media/andreacoque.jpg",
+  //   name: "Karen coque",
+  //   role: "Contadora",
+  // },
   // {
   //   photo:
   //     "https://quantdev.co/_next/image?url=%2Fimages%2FteamOrigin%2Fmanuel.png&w=3840&q=75",
@@ -64,14 +63,12 @@ const team = [
       <Services />
 
       <h1
-        class="title text-2xl text-center bg-gradient-to-r from-accent to-secondary text-transparent bg-clip-text lg:text-[56px] md:text-4xl sm:text-3xl w-full h-full pb-5 mt-6"
+        class="title text-2xl text-center bg-gradient-to-r from-accent to-secondary text-transparent bg-clip-text lg:text-[56px] md:text-4xl sm:text-3xl w-full h-full pb-5 pt-[85px] mt-[-40px]"
       >
         Nuestro Equipo
       </h1>
       <div class="w-full flex justify-center items-center py-12">
-        <section
-          class="grid grid-cols-2 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-5"
-        >
+        <section class="flex justify-center items-center flex-wrap gap-10">
           {
             team.map((index) => (
               <Team photo={index.photo} name={index.name} role={index.role} />
