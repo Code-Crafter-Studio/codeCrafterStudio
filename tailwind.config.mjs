@@ -18,7 +18,7 @@ export default {
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 
-      "2xl": "1536px",
+      "2xl": "1436px",
       // => @media (min-width: 1536px) { ... }
       "3xl": "1800px",
       // => @media (min-width: 1800px) { ... }
@@ -26,7 +26,7 @@ export default {
     extend: {
       colors: { ...darkTheme },
       fontFamily: {
-        'twk-everett': ['TWK Everett Bold', 'sans-serif'],
+        "twk-everett": ["TWK Everett Bold", "sans-serif"],
       },
     },
   },

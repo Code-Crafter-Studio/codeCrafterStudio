@@ -3,18 +3,25 @@
 export interface Props {
   photo: string;
   name: string;
-  position: string;
+  role: string;
 }
 
-const { photo, name, position } = Astro.props;
+const { photo, name, role } = Astro.props;
 ---
 
-<div class="bg-secondary text-primary p-6 mb-40 shadow-lg flex items-center w-80 flex-row transform transition duration-500 hover:shadow-2xl hover:bg-gradient-to-r hover:from-purple-400 hover:to-blue-500 hover:scale-105">
-  <img src={photo} alt={name} class="w-24 h-24 rounded-full object-cover transition-transform duration-500 transform" />
-  <div> 
-    <h3 class="ml-5 text-xl font-bold">{name}</h3>
-    <p class="ml-5 text-sm text-primary font-bold">{position}</p>
+<article class="relative">
+  <figure
+    class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-full before:rounded-2xl before:border-4 before:border-accent before:opacity-0 before:transition before:duration-200 before:ease-in-out before:content-[''] hover:before:rotate-[8deg] hover:before:opacity-100"
+  >
+    <img
+      alt="Profile Photo"
+      class="relative z-10 rounded-3xl w-[400px] h-auto"
+      src={photo}
+      style="color: transparent;"
+    />
+  </figure>
+  <div>
+    <h4 class="mt-4 text-lg font-bold text-accent">{name}</h4>
+    <p class="title text-white">{role}</p>
   </div>
-</div>
-
-
+</article>

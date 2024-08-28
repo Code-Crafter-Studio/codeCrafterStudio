@@ -2,21 +2,36 @@
 import NavBar from "@components/NavBar.astro";
 import Hero from "@components/Hero.astro";
 import "../styles/global.css";
-import Mac from "@components/Mac.astro";
+import Contac from "@components/Contac.astro";
 import Services from "@components/Services.astro";
 import Team from "@components/Team.astro";
-import Titleteam from "@components/Titleteam.astro"
 
 const team = [
   {
-    photo: 'https://i.pinimg.com/236x/4b/b2/bb/4bb2bb45bd21bb55053cebbd672b85f2.jpg',
-    name: 'Juan',
-    position: 'Developer',
+    photo: "/media/juanPabloCeron.jpg",
+    name: "Juan Pablo",
+    role: "Developer",
   },
   {
-    photo: 'https://i.pinimg.com/236x/4b/b2/bb/4bb2bb45bd21bb55053cebbd672b85f2.jpg',
-    name: 'John',
-    position: 'Developer',
+    photo: "/media/juanYonda.jpg",
+    name: "Juan Yonda",
+    role: "Developer",
+  },
+  {
+    photo: "/media/andreacoque.jpg",
+    name: "Karen coque",
+    role: "Contadora",
+  },
+  // {
+  //   photo:
+  //     "https://quantdev.co/_next/image?url=%2Fimages%2FteamOrigin%2Fmanuel.png&w=3840&q=75",
+  //   name: "Andres ordoñez",
+  //   role: "Developer",
+  // },
+  {
+    photo: "/media/andres.jpg",
+    name: "Andres ordoñez",
+    role: "Developer",
   },
 ];
 ---
@@ -29,21 +44,41 @@ const team = [
     <meta name="generator" content={Astro.generator} />
     <title>Code Crafther Studios</title>
   </head>
-  <body class="bg-primary">
+  <body class="bg-primary custom-background">
     <NavBar />
     <main>
-      <section class="bg-primary w-[70vw] flex flex-col gap-10 m-auto pb-10">
+      <section
+        class="flex flex-col justify-center items-center gap-10 m-auto pb-10"
+      >
         <Hero />
-        <Mac />
+        <div class="flex justify-center items-center w-[90%] xl:w-[60vw]">
+          <video
+            src="/media/videoMac.mp4"
+            loop
+            playsinline
+            autoplay
+            muted
+            class="w-full h-full object-cover"></video>
+        </div>
       </section>
       <Services />
-     <Titleteam/>
-      <section class="bg-primary flex flex-row gap-10 pb-10 pt-10 justify-center">
-        
-        {team.map(index => (
-          <Team photo={index.photo} name={index.name} position={index.position} />
-        ))}
-      </section>
+
+      <h1
+        class="title text-2xl text-center bg-gradient-to-r from-accent to-secondary text-transparent bg-clip-text lg:text-[56px] md:text-4xl sm:text-3xl w-full h-full pb-5 mt-6"
+      >
+        Nuestro Equipo
+      </h1>
+      <div class="w-full flex justify-center items-center py-12">
+        <section
+          class="grid grid-cols-2 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-5"
+        >
+          {
+            team.map((index) => (
+              <Team photo={index.photo} name={index.name} role={index.role} />
+            ))
+          }
+        </section>
+      </div>
     </main>
   </body>
 </html>

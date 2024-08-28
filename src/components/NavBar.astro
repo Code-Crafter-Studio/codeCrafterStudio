@@ -1,11 +1,8 @@
 ---
-import Github from "@icons/github.astro";
-import Discord from "@icons/discord.astro";
-import Linkedin from "@icons/linkedin.astro";
+
 ---
 
 <script>
-  // Función para agregar clase de blur cuando el header es sticky
   function handleScroll() {
     const header = document.getElementById("main-header");
     if (window.scrollY > 0) {
@@ -20,41 +17,37 @@ import Linkedin from "@icons/linkedin.astro";
   }
 </script>
 
-<header
+<headera
   id="main-header"
-  class="bg-black text-white flex justify-between items-center pb-4 pt-6 sticky top-0 z-50 "
+  class="bg-transparent text-white flex justify-around items-center pb-4 pt-6 sticky top-0 z-50"
 >
   <div class="logo ml-[100px]">
-    <img
-      src="/logos/logoCrafter.svg"
-      alt="Code Crafter Studio"
-      class="h-8"
-    />
+    <img src="/logos/logoCrafter.svg" alt="Code Crafter Studio" class="h-10" />
   </div>
   <div class="social-links flex items-center space-x-4 mr-[100px]">
     <a
       href="https://github.com"
       target="_blank"
-      aria-label="GitHub"
-      class="text-sm"
+      aria-label="About"
+      class="text-lg"
     >
-      <Github />
+      Sobre Nosotros
     </a>
     <a
       href="https://linkedin.com"
       target="_blank"
-      aria-label="LinkedIn"
-      class="text-sm"
+      aria-label="contac"
+      class="text-lg"
     >
-      <Linkedin />
+      Contatanos
     </a>
     <a
       href="https://discord.com"
       target="_blank"
-      aria-label="Discord"
-      class="text-sm"
+      aria-label="services"
+      class="text-lg"
     >
-      <Discord />
+      Servicios
     </a>
   </div>
-</header>
+</headera>
