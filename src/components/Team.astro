@@ -14,14 +14,14 @@ const { photo, name, role } = Astro.props;
     class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-full before:rounded-2xl before:border-4 before:border-accent before:opacity-0 before:transition before:duration-200 before:ease-in-out before:content-[''] hover:before:rotate-[8deg] hover:before:opacity-100"
   >
     <img
-      alt="Profile Photo"
-      class="relative z-10 rounded-3xl w-[400px] h-auto"
+      alt={`Foto de perfil de ${name}`}
+      class="relative z-10 rounded-3xl w-[300px] h-[300px] object-cover object-center"
       src={photo}
       style="color: transparent;"
     />
   </figure>
-  <div>
+  <div class="w-[300px]">
     <h4 class="mt-4 text-lg font-bold text-accent">{name}</h4>
-    <p class="title text-white">{role}</p>
+    <p class="title text-[#a1a7a6]">{role}</p>
   </div>
 </article>
