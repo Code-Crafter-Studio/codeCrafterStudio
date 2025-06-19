@@ -65,7 +65,7 @@ jobs:
           path: dist/
           retention-days: 7
 
-  # 🐳 JOB 2: Build Docker Image
+  #Build Docker Image
   build-docker:
     name: 🐳 Build Docker Image
     runs-on: ubuntu-latest
