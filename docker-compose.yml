@@ -2,7 +2,7 @@ services:
   codecrafter-studio:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.nossl
     container_name: codecrafter-studio-web
     restart: unless-stopped
     ports:
@@ -14,30 +14,9 @@ services:
       # Certificados SSL persistentes
       - ./ssl-certs:/etc/nginx/ssl
       - ./letsencrypt:/etc/letsencrypt
+      - ./certbot-webroot:/var/www/certbot
     environment:
       - NODE_ENV=production
-    networks:
-      - codecrafter-network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.codecrafter.rule=Host(`codecrafstudio.com`,`www.codecrafstudio.com`)"
-      - "traefik.http.services.codecrafter.loadbalancer.server.port=80"
-      # Redirección www
-      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)"
-      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}"
-      - "traefik.http.routers.codecrafter.middlewares=www-redirect"
-    depends_on:
-      - certbot
-
-  # Servicio para renovación automática de SSL
-  certbot:
-    image: certbot/certbot:latest
-    container_name: codecrafter-certbot
-    volumes:
-      - ./letsencrypt:/etc/letsencrypt
-      - ./ssl-certs:/etc/nginx/ssl
-      - ./certbot-webroot:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email contact@codecrafstudio.com --agree-tos --no-eff-email -d codecrafstudio.com -d www.codecrafstudio.com
     networks:
       - codecrafter-network
 
