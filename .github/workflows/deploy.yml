@@ -162,7 +162,6 @@ jobs:
           
           # Transferir configuración Docker actualizada
           scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/codecrafter-studio/
-          scp -r scripts/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/codecrafter-studio/
           
           # Ejecutar deployment en el servidor
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} << EOF
