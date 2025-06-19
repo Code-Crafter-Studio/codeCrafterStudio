@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Permite ejecutar manualmente
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '18'
@@ -59,7 +59,7 @@ jobs:
           path: dist/
           retention-days: 7
 
-  # 🐳 JOB 2: Build Docker Image
+  #Build Docker Image
   build-docker:
     name: 🐳 Build Docker Image
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
             BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
             VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
 
-  # 🚀 JOB 3: Deploy a Producción
+  #  Deploy a Producción
   deploy:
     name: 🚀 Deploy to Production
     runs-on: ubuntu-latest
