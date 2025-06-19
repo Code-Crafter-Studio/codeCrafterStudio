@@ -205,11 +205,11 @@ jobs:
               networks:
                 - codecrafter-network
               healthcheck:
-                test: ["CMD", "curl", "-f", "http://localhost/"]
+                test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
                 interval: 30s
                 timeout: 10s
-                retries: 3
-                start_period: 40s
+                retries: 5
+                start_period: 60s
           
           networks:
             codecrafter-network:
@@ -220,31 +220,38 @@ jobs:
             echo "🏗️ Iniciando contenedor..."
             docker compose up -d
             
-            # Health check
+            # Health check mejorado
             echo "🏥 Verificando salud del servicio..."
-            sleep 20
+            sleep 30
             
-            # Verificar que el contenedor esté saludable
-            for i in {1..6}; do
-              if docker compose ps | grep -q "healthy\|Up.*seconds"; then
-                echo "✅ Servicio saludable! Deployment exitoso."
+            # Verificar que el contenedor esté corriendo primero
+            for i in {1..10}; do
+              echo "🔍 Intento $i/10 - Verificando estado del contenedor..."
+              
+              # Verificar que el contenedor esté corriendo
+              if docker compose ps | grep -q "codecrafter-studio-web.*Up"; then
+                echo "✅ Contenedor está corriendo!"
                 
-                # Limpiar imágenes antiguas
-                docker image prune -f
-                
-                # Verificar acceso HTTP
-                if curl -f -s http://localhost/ > /dev/null; then
-                  echo "🌐 Sitio web accesible correctamente"
+                # Verificar acceso HTTP con más tiempo
+                echo "🌐 Verificando acceso HTTP..."
+                if curl -f -s -m 10 http://localhost/ > /dev/null; then
+                  echo "✅ Sitio web accesible correctamente!"
+                  
+                  # Limpiar imágenes antiguas
+                  docker image prune -f
+                  
                   echo "🗑️ Eliminando backup temporal..."
                   rm -rf $BACKUP_DIR
+                  echo "🎉 Deployment exitoso!"
                   exit 0
                 else
-                  echo "⚠️ Advertencia: El sitio web no responde correctamente"
+                  echo "⚠️ Sitio web aún no responde, esperando..."
                 fi
-                exit 0
+              else
+                echo "⏳ Contenedor aún no está listo..."
               fi
-              echo "⏳ Esperando... intento $i/6"
-              sleep 10
+              
+              sleep 15
             done
             
             # Si llegamos aquí, algo salió mal
