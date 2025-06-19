@@ -1,0 +1,48 @@
+# Dependencias de Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de build/dist
+dist/
+.astro/
+
+# Archivos de desarrollo
+.env*
+.DS_Store
+*.log
+
+# Control de versiones
+.git/
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentación y scripts
+README.md
+*.md
+scripts/
+
+# Cache
+.cache/
+.temp/
+
+# Archivos temporales
+*.tmp
+*.temp 

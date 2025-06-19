@@ -1,0 +1,285 @@
+name: 🚀 Deploy CodeCrafter Studio
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Permite ejecutar manualmente
+
+env:
+  NODE_VERSION: '18'
+  PROJECT_NAME: 'codecrafter-studio'
+  DOCKER_IMAGE: 'codecrafter-studio'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/codecrafter-studio
+
+jobs:
+  # 🧪 JOB 1: Verificar y Testear
+  test:
+    name: 🧪 Test & Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🔍 Run Astro Check
+        run: npm run astro check
+
+      - name: 🏗️ Build Project
+        run: npm run build
+
+      - name: 🧪 Test Build Output
+        run: |
+          echo "🔍 Verificando archivos generados..."
+          ls -la dist/
+          echo "📊 Tamaño del build:"
+          du -sh dist/
+          
+          # Verificar archivos críticos
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Error: index.html no encontrado"
+            exit 1
+          fi
+          echo "✅ Build verification passed"
+
+      - name: 📤 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+          retention-days: 7
+
+  # 🐳 JOB 2: Build Docker Image
+  build-docker:
+    name: 🐳 Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+      image-tag: ${{ steps.meta.outputs.tags }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📤 Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🏗️ Build and Push Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+
+  # 🚀 JOB 3: Deploy a Producción
+  deploy:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, build-docker]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📋 Add SSH Host
+        run: |
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 Deploy to Server
+        run: |
+          # Variables
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          BACKUP_DIR="/tmp/codecrafter-backup-$(date +%Y%m%d-%H%M%S)"
+          
+          echo "🚀 Iniciando deployment de CodeCrafter Studio..."
+          echo "🐳 Imagen Docker: $IMAGE_TAG"
+          
+          # Crear estructura y transferir archivos
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p /root/projects/codecrafter-studio"
+          
+          # Transferir configuración Docker actualizada
+          scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/codecrafter-studio/
+          scp -r scripts/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/codecrafter-studio/
+          
+          # Ejecutar deployment en el servidor
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} << EOF
+            cd /root/projects/codecrafter-studio
+            
+            echo "📦 Haciendo backup del estado actual..."
+            docker compose down --timeout 30 || true
+            mkdir -p $BACKUP_DIR
+            cp -r . $BACKUP_DIR/ 2>/dev/null || true
+            
+            # Crear directorio de logs
+            mkdir -p logs/nginx
+            
+            # Login a GitHub Container Registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+            
+            # Pull de la nueva imagen
+            echo "📥 Descargando nueva imagen..."
+            docker pull $IMAGE_TAG
+            
+            # Actualizar docker-compose con la nueva imagen
+            cat > docker-compose.yml << 'COMPOSE_EOF'
+          version: '3.8'
+          
+          services:
+            codecrafter-studio:
+              image: $IMAGE_TAG
+              container_name: codecrafter-studio-web
+              restart: unless-stopped
+              ports:
+                - "80:80"
+                - "443:443"
+              volumes:
+                - ./logs/nginx:/var/log/nginx
+              environment:
+                - NODE_ENV=production
+              networks:
+                - codecrafter-network
+              healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost/"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+                start_period: 40s
+          
+          networks:
+            codecrafter-network:
+              driver: bridge
+          COMPOSE_EOF
+            
+            # Deployment
+            echo "🏗️ Iniciando contenedor..."
+            docker compose up -d
+            
+            # Health check
+            echo "🏥 Verificando salud del servicio..."
+            sleep 20
+            
+            # Verificar que el contenedor esté saludable
+            for i in {1..6}; do
+              if docker compose ps | grep -q "healthy\|Up.*seconds"; then
+                echo "✅ Servicio saludable! Deployment exitoso."
+                
+                # Limpiar imágenes antiguas
+                docker image prune -f
+                
+                # Verificar acceso HTTP
+                if curl -f -s http://localhost/ > /dev/null; then
+                  echo "🌐 Sitio web accesible correctamente"
+                  echo "🗑️ Eliminando backup temporal..."
+                  rm -rf $BACKUP_DIR
+                  exit 0
+                else
+                  echo "⚠️ Advertencia: El sitio web no responde correctamente"
+                fi
+                exit 0
+              fi
+              echo "⏳ Esperando... intento $i/6"
+              sleep 10
+            done
+            
+            # Si llegamos aquí, algo salió mal
+            echo "❌ Deployment falló, realizando rollback..."
+            docker compose down
+            
+            # Rollback
+            if [ -d "$BACKUP_DIR" ]; then
+              cp -r $BACKUP_DIR/* .
+              docker compose up -d
+              echo "🔄 Rollback completado"
+            fi
+            
+            exit 1
+          EOF
+
+      - name: 🧹 Cleanup
+        if: always()
+        run: |
+          # Logout del registry
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} "docker logout ${{ env.REGISTRY }}" || true
+
+      - name: 🔔 Notify Success
+        if: success()
+        run: |
+          echo "🎉 CodeCrafter Studio desplegado exitosamente!"
+          echo "🌐 Sitio: https://${{ secrets.SERVER_HOST }}"
+          echo "🐳 Imagen: ${{ needs.build-docker.outputs.image-tag }}"
+          echo "📊 Digest: ${{ needs.build-docker.outputs.image-digest }}"
+
+      - name: 🚨 Notify Failure  
+        if: failure()
+        run: |
+          echo "❌ El deployment falló!"
+          echo "🔍 Revisa los logs arriba para más detalles"
+          echo "📋 Se ejecutó rollback automático si fue posible"
+
+  # 🧹 JOB 4: Cleanup (solo en main)
+  cleanup:
+    name: 🧹 Cleanup Old Images
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success() && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: 🗑️ Delete Old Images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'codecrafter-studio'
+          package-type: 'container'
+          min-versions-to-keep: 5
+          delete-only-untagged-versions: false 

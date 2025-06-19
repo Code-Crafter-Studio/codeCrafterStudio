@@ -9,7 +9,7 @@ export interface Props {
 const { photo, name, role } = Astro.props;
 ---
 
-<article class="relative">
+<article class="relative" itemscope itemtype="https://schema.org/Person">
   <figure
     class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-full before:rounded-2xl before:border-4 before:border-accent before:opacity-0 before:transition before:duration-200 before:ease-in-out before:content-[''] hover:before:rotate-[8deg] hover:before:opacity-100"
   >
@@ -17,11 +17,13 @@ const { photo, name, role } = Astro.props;
       alt={`Foto de perfil de ${name}`}
       class="relative z-10 rounded-3xl w-[300px] h-[300px] object-cover object-center"
       src={photo}
+      itemprop="image"
+      loading="lazy"
       style="color: transparent;"
     />
   </figure>
   <div class="w-[300px]">
-    <h4 class="mt-4 text-lg font-bold text-accent">{name}</h4>
-    <p class="title text-[#a1a7a6]">{role}</p>
+    <h3 class="mt-4 text-lg font-bold text-accent" itemprop="name">{name}</h3>
+    <p class="title text-[#a1a7a6]" itemprop="jobTitle">{role}</p>
   </div>
 </article>

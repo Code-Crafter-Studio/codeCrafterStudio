@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  codecrafter-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codecrafter-studio-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"  # Para HTTPS en el futuro
+    volumes:
+      # Logs persistentes
+      - ./logs/nginx:/var/log/nginx
+    environment:
+      - NODE_ENV=production
+    networks:
+      - codecrafter-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.codecrafter.rule=Host(`codecrafstudio.com`,`www.codecrafstudio.com`)"
+      - "traefik.http.services.codecrafter.loadbalancer.server.port=80"
+      # Redirección www
+      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)"
+      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.routers.codecrafter.middlewares=www-redirect"
+
+  # Servicio opcional para renovación automática de SSL con Let's Encrypt
+  # Descomenta si necesitas HTTPS automático
+  # traefik:
+  #   image: traefik:v2.10
+  #   container_name: traefik
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     - "8080:8080"  # Dashboard de Traefik
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./traefik:/etc/traefik
+  #     - ./ssl-certs:/ssl-certs
+  #   networks:
+  #     - codecrafter-network
+  #   command:
+  #     - --api.dashboard=true
+  #     - --providers.docker=true
+  #     - --providers.docker.exposedbydefault=false
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.websecure.address=:443
+  #     - --certificatesresolvers.letsencrypt.acme.email=tu@email.com
+  #     - --certificatesresolvers.letsencrypt.acme.storage=/ssl-certs/acme.json
+  #     - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+
+networks:
+  codecrafter-network:
+    driver: bridge
+
+volumes:
+  nginx-logs:
+    driver: local 
