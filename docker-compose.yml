@@ -45,7 +45,6 @@ services:
   #     - --certificatesresolvers.letsencrypt.acme.email=tu@email.com
   #     - --certificatesresolvers.letsencrypt.acme.storage=/ssl-certs/acme.json
   #     - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
-
 networks:
   codecrafter-network:
     driver: bridge
