@@ -18,7 +18,6 @@ env:
   PROJECT_NAME: 'codecrafter-studio'
   DOCKER_IMAGE: 'codecrafter-studio'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   # 🧪 JOB 1: Verificar y Testear
@@ -80,6 +79,7 @@ jobs:
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-tag: ${{ steps.meta.outputs.tags }}
+      image-name: ${{ steps.lowercase.outputs.image-name }}
     
     steps:
       - name: 📥 Checkout Code
@@ -94,6 +94,13 @@ jobs:
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: 🔧 Generate Lowercase Image Name
+        id: lowercase
+        run: |
+          IMAGE_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "image-name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "🏷️ Nombre de imagen generado: $IMAGE_NAME"
+
       - name: 🔑 Log in to Container Registry
         uses: docker/login-action@v3
         with:
@@ -105,7 +112,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image-name }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -151,7 +158,7 @@ jobs:
       - name: 🚀 Deploy to Server
         run: |
           # Variables
-          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ needs.build-docker.outputs.image-name }}:latest"
           BACKUP_DIR="/tmp/codecrafter-backup-$(date +%Y%m%d-%H%M%S)"
           
           echo "🚀 Iniciando deployment de CodeCrafter Studio..."
