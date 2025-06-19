@@ -300,14 +300,16 @@ jobs:
   cleanup:
     name: 🧹 Cleanup Old Images
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: [deploy, build-docker]
     if: success() && github.ref == 'refs/heads/main'
     
     steps:
       - name: 🗑️ Delete Old Images
         uses: actions/delete-package-versions@v5
+        continue-on-error: true
         with:
-          package-name: 'codecrafter-studio'
+          package-name: 'codecrafterstudio'
           package-type: 'container'
           min-versions-to-keep: 5
-          delete-only-untagged-versions: false 
+          delete-only-untagged-versions: false
+          token: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }} 
