@@ -268,7 +268,7 @@ jobs:
           echo "🔍 Revisa los logs arriba para más detalles"
           echo "📋 Se ejecutó rollback automático si fue posible"
 
-  # 🧹 JOB 4: Cleanup (solo en main)
+  #Cleanup (solo en main)
   cleanup:
     name: 🧹 Cleanup Old Images
     runs-on: ubuntu-latest
