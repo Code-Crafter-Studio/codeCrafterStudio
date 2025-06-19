@@ -18,7 +18,7 @@ env:
   PROJECT_NAME: 'codecrafter-studio'
   DOCKER_IMAGE: 'codecrafter-studio'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/codecrafter-studio
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   # 🧪 JOB 1: Verificar y Testear
