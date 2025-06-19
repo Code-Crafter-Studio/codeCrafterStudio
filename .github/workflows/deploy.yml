@@ -169,6 +169,12 @@ jobs:
             
             echo "📦 Haciendo backup del estado actual..."
             docker compose down --timeout 30 || true
+            
+            # Verificar y liberar puerto 80
+            echo "🔍 Verificando puerto 80..."
+            sudo fuser -k 80/tcp 2>/dev/null || true
+            docker ps --filter "publish=80" --format "table {{.Names}}" | grep -v NAMES | xargs -r docker stop || true
+            
             mkdir -p $BACKUP_DIR
             cp -r . $BACKUP_DIR/ 2>/dev/null || true
             
@@ -184,8 +190,6 @@ jobs:
             
             # Actualizar docker-compose con la nueva imagen
             cat > docker-compose.yml << 'COMPOSE_EOF'
-          version: '3.8'
-          
           services:
             codecrafter-studio:
               image: $IMAGE_TAG
