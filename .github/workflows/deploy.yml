@@ -195,7 +195,7 @@ jobs:
             echo "📥 Descargando nueva imagen..."
             docker pull $IMAGE_TAG
             
-            # Actualizar docker-compose con la nueva imagen
+            # Actualizar docker-compose con la nueva imagen preservando SSL
             cat > docker-compose.yml << 'COMPOSE_EOF'
           services:
             codecrafter-studio:
@@ -207,6 +207,9 @@ jobs:
                 - "443:443"
               volumes:
                 - ./logs/nginx:/var/log/nginx
+                - ./ssl-certs:/etc/nginx/ssl
+                - ./letsencrypt:/etc/letsencrypt
+                - ./certbot-webroot:/var/www/certbot
               environment:
                 - NODE_ENV=production
               networks:

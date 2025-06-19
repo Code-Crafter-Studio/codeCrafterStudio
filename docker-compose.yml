@@ -11,6 +11,9 @@ services:
     volumes:
       # Logs persistentes
       - ./logs/nginx:/var/log/nginx
+      # Certificados SSL persistentes
+      - ./ssl-certs:/etc/nginx/ssl
+      - ./letsencrypt:/etc/letsencrypt
     environment:
       - NODE_ENV=production
     networks:
@@ -23,6 +26,20 @@ services:
       - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)"
       - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}"
       - "traefik.http.routers.codecrafter.middlewares=www-redirect"
+    depends_on:
+      - certbot
+
+  # Servicio para renovación automática de SSL
+  certbot:
+    image: certbot/certbot:latest
+    container_name: codecrafter-certbot
+    volumes:
+      - ./letsencrypt:/etc/letsencrypt
+      - ./ssl-certs:/etc/nginx/ssl
+      - ./certbot-webroot:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email contact@codecrafstudio.com --agree-tos --no-eff-email -d codecrafstudio.com -d www.codecrafstudio.com
+    networks:
+      - codecrafter-network
 
   # Servicio opcional para renovación automática de SSL con Let's Encrypt
   # Descomenta si necesitas HTTPS automático

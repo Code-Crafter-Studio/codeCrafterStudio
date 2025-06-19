@@ -28,13 +28,41 @@ RUN npm run build
 # Stage final - imagen de producción
 FROM nginx:alpine AS runner
 
-# Copiar configuración de nginx
+# Copiar configuración de nginx con SSL
 COPY <<EOF /etc/nginx/conf.d/default.conf
+# Redirección HTTP a HTTPS
 server {
     listen 80;
-    server_name localhost;
+    server_name codecrafstudio.com www.codecrafstudio.com;
+    
+    # Ubicación para validación de certificados Let's Encrypt
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+    
+    # Redireccionar todo el tráfico HTTP a HTTPS
+    location / {
+        return 301 https://\$server_name\$request_uri;
+    }
+}
+
+# Configuración HTTPS
+server {
+    listen 443 ssl http2;
+    server_name codecrafstudio.com www.codecrafstudio.com;
     root /usr/share/nginx/html;
     index index.html;
+
+    # Configuración SSL
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    
+    # Configuración SSL moderna y segura
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
 
     # Configuración para SEO y performance
     location / {
@@ -46,11 +74,12 @@ server {
             add_header Cache-Control "public, no-transform";
         }
         
-        # Headers de seguridad
+        # Headers de seguridad mejorados para HTTPS
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-XSS-Protection "1; mode=block" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     }
 
     # Compresión gzip
@@ -64,6 +93,9 @@ server {
     error_log /var/log/nginx/error.log;
 }
 EOF
+
+# Crear directorio para certificados SSL
+RUN mkdir -p /etc/nginx/ssl
 
 # Copiar archivos buildados desde el stage builder
 COPY --from=builder /app/dist /usr/share/nginx/html
