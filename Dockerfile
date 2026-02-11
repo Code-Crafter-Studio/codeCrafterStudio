@@ -30,19 +30,27 @@ FROM nginx:alpine AS runner
 
 # Copiar configuración de nginx con SSL
 COPY <<EOF /etc/nginx/conf.d/default.conf
-# Redirección HTTP a HTTPS
+# Puerto 80: detrás de NPM (X-Forwarded-Proto: https) se sirve contenido; acceso directo redirige a HTTPS
 server {
     listen 80;
     server_name codecrafstudio.com www.codecrafstudio.com;
-    
-    # Ubicación para validación de certificados Let's Encrypt
+    root /usr/share/nginx/html;
+    index index.html;
+
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
-    
-    # Redireccionar todo el tráfico HTTP a HTTPS
+
     location / {
-        return 301 https://\$server_name\$request_uri;
+        # No redirigir cuando el proxy (NPM) ya envió la petición por HTTPS
+        if (\$http_x_forwarded_proto != "https") {
+            return 301 https://\$server_name\$request_uri;
+        }
+        try_files \$uri \$uri/ /index.html;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     }
 }
 
