@@ -164,11 +164,8 @@ jobs:
           echo "🚀 Iniciando deployment de CodeCrafter Studio..."
           echo "🐳 Imagen Docker: $IMAGE_TAG"
           
-          # Crear estructura y transferir archivos
+          # Crear estructura (no copiamos docker-compose del repo: el servidor usa 3001/3443 y red webproxy)
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p /root/projects/codecrafter-studio"
-          
-          # Transferir configuración Docker actualizada
-          scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }}:/root/projects/codecrafter-studio/
           
           # Ejecutar deployment en el servidor
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_HOST }} << EOF
@@ -176,11 +173,6 @@ jobs:
             
             echo "📦 Haciendo backup del estado actual..."
             docker compose down --timeout 30 || true
-            
-            # Verificar y liberar puerto 80
-            echo "🔍 Verificando puerto 80..."
-            sudo fuser -k 80/tcp 2>/dev/null || true
-            docker ps --filter "publish=80" --format "table {{.Names}}" | grep -v NAMES | xargs -r docker stop || true
             
             mkdir -p $BACKUP_DIR
             cp -r . $BACKUP_DIR/ 2>/dev/null || true
@@ -195,7 +187,7 @@ jobs:
             echo "📥 Descargando nueva imagen..."
             docker pull $IMAGE_TAG
             
-            # Actualizar docker-compose con la nueva imagen preservando SSL
+            # Actualizar docker-compose: puertos 3001/3443 (80/443 los usa nginx-proxy-manager) y red webproxy
             cat > docker-compose.yml << 'COMPOSE_EOF'
           services:
             codecrafter-studio:
@@ -203,8 +195,8 @@ jobs:
               container_name: codecrafter-studio-web
               restart: unless-stopped
               ports:
-                - "80:80"
-                - "443:443"
+                - "3001:80"
+                - "3443:443"
               volumes:
                 - ./logs/nginx:/var/log/nginx
                 - ./ssl-certs:/etc/nginx/ssl
@@ -213,7 +205,7 @@ jobs:
               environment:
                 - NODE_ENV=production
               networks:
-                - codecrafter-network
+                - webproxy
               healthcheck:
                 test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
                 interval: 30s
@@ -222,8 +214,8 @@ jobs:
                 start_period: 60s
           
           networks:
-            codecrafter-network:
-              driver: bridge
+            webproxy:
+              external: true
           COMPOSE_EOF
             
             # Deployment
@@ -240,9 +232,9 @@ jobs:
             if docker compose ps | grep -q "codecrafter-studio-web.*Up"; then
               echo "✅ Contenedor está corriendo!"
               
-              # Verificar acceso HTTP
+              # Verificar acceso HTTP (app escucha en 3001 por nginx-proxy-manager)
               echo "🌐 Verificando acceso HTTP..."
-              if curl -f -s -m 10 http://localhost/ > /dev/null; then
+              if curl -f -s -m 10 http://localhost:3001/ > /dev/null; then
                 echo "✅ Sitio web accesible correctamente!"
                 
                 # Limpiar imágenes antiguas
